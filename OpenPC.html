@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open PC - Employee Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f0fa 100%);
+            min-height: 100vh;
+        }
+
+        :root {
+            --primary-blue: #1e4b8f;
+            --secondary-blue: #2a6bb0;
+            --light-blue: #e3f0ff;
+            --white: #ffffff;
+            --off-white: #f8fafd;
+            --dark-blue: #0f2b4a;
+            --border-blue: #b8d1f0;
+            --shadow-blue: rgba(30, 75, 143, 0.1);
+            --success-green: #4CAF50;
+            --warning-orange: #ff9800;
+            --danger-red: #f44336;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px var(--shadow-blue);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border-blue);
+        }
+
+        .company-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .company-logo h1 {
+            color: var(--primary-blue);
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .company-logo p {
+            color: var(--secondary-blue);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-blue);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px var(--shadow-blue);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .login-btn:hover {
+            background: var(--secondary-blue);
+        }
+
+        .dashboard-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--white);
+            border-right: 2px solid var(--border-blue);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px var(--shadow-blue);
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            border-bottom: 2px solid var(--border-blue);
+        }
+
+        .sidebar-header h2 {
+            color: var(--primary-blue);
+            font-size: 24px;
+        }
+
+        .sidebar-header p {
+            color: var(--secondary-blue);
+            font-size: 14px;
+        }
+
+        .employee-id-badge {
+            background: var(--light-blue);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-blue);
+            border: 1px solid var(--border-blue);
+        }
+
+        .nav-menu {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--light-blue);
+            border-left-color: var(--primary-blue);
+        }
+
+        .nav-item.active {
+            background: var(--light-blue);
+            border-left-color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        .profile-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 5px 20px var(--shadow-blue);
+            border: 1px solid var(--border-blue);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .profile-image-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid var(--primary-blue);
+            box-shadow: 0 5px 15px var(--shadow-blue);
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: var(--light-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        .upload-btn {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(30, 75, 143, 0.9);
+            color: var(--white);
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .upload-btn:hover {
+            background: var(--primary-blue);
+        }
+
+        #imageUpload {
+            display: none;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info h2 {
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+
+        .profile-info p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .employee-id-display {
+            background: var(--light-blue);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 10px 0;
+            font-weight: 600;
+            color: var(--primary-blue);
+            border: 1px solid var(--border-blue);
+        }
+
+        .edit-profile-btn {
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .edit-profile-btn:hover {
+            background: var(--secondary-blue);
+        }
+
+        .attendance-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 5px 20px var(--shadow-blue);
+            border: 1px solid var(--border-blue);
+        }
+
+        .attendance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .date-time {
+            background: var(--light-blue);
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: var(--primary-blue);
+        }
+
+        .date-time .date {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .date-time .time {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .clock-btn {
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .clock-in {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .clock-out {
+            background: #f44336;
+            color: white;
+        }
+
+        .clock-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .attendance-status {
+            background: var(--light-blue);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-clock-in {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-clock-out {
+            background: #f44336;
+            color: white;
+        }
+
+        .attendance-history {
+            overflow-x: auto;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 12px;
+            text-align: left;
+        }
+
+        .history-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-blue);
+        }
+
+        .history-table tr:hover {
+            background: var(--light-blue);
+        }
+
+        /* Updated Requests Section */
+        .requests-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 5px 20px var(--shadow-blue);
+            border: 1px solid var(--border-blue);
+        }
+
+        .requests-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--primary-blue);
+            background: var(--white);
+            color: var(--primary-blue);
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .requests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .request-card {
+            background: var(--light-blue);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-blue);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .request-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--shadow-blue);
+        }
+
+        .request-card h3 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .request-card .customer {
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .request-specs-summary {
+            background: var(--white);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-blue);
+        }
+
+        .request-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .request-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .tag-pending {
+            background: var(--warning-orange);
+            color: white;
+        }
+
+        .tag-finished {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .tag-progress {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .request-date {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 20px 30px;
+            border-bottom: 2px solid var(--border-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--primary-blue);
+            color: var(--white);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0 10px;
+        }
+
+        .close-modal:hover {
+            opacity: 0.8;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .request-detail-item {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-blue);
+        }
+
+        .request-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            color: #333;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .specs-box {
+            background: var(--light-blue);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border-blue);
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+
+        .copy-section {
+            background: var(--off-white);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px dashed var(--primary-blue);
+        }
+
+        .copy-btn {
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--secondary-blue);
+        }
+
+        .copy-success {
+            color: var(--success-green);
+            text-align: center;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .copy-success.show {
+            display: block;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .finish-btn {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .finish-btn:hover:not(:disabled) {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .finish-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .email-btn {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .email-btn:hover {
+            background: var(--secondary-blue);
+            transform: translateY(-2px);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            color: var(--primary-blue);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-details {
+            text-align: right;
+        }
+
+        .user-name {
+            color: var(--primary-blue);
+            font-weight: 600;
+            display: block;
+        }
+
+        .user-id {
+            color: var(--secondary-blue);
+            font-size: 12px;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .demo-credentials {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--light-blue);
+            border-radius: 10px;
+            font-size: 12px;
+            border: 1px solid var(--border-blue);
+        }
+
+        .demo-credentials h4 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+
+        .demo-credentials p {
+            color: var(--secondary-blue);
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .modal-content {
+                margin: 10px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" id="loginPage">
+        <div class="login-card">
+            <div class="company-logo">
+                <h1>Open PC</h1>
+                <p>Employee Portal</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="employeeId">Employee ID</label>
+                    <input type="text" id="employeeId" placeholder="Enter your Employee ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="login-btn">Log In</button>
+            </form>
+            <div class="demo-credentials">
+                <h4>⚠️ Employee Credentials:</h4>
+                <p><strong>1003312949</strong> (Patrick Joseph Datu) - Password: patrick123</p>
+                <p><strong>1003312950 to 1003312959</strong> - Password: welcome2026</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container" id="dashboardPage">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Open PC</h2>
+                <p>Employee Portal</p>
+                <div class="employee-id-badge" id="sidebarEmployeeId"></div>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item active" onclick="showSection('attendance', this)">📋 Attendance</div>
+                <div class="nav-item" onclick="showSection('profile', this)">👤 Profile</div>
+                <div class="nav-item" onclick="showSection('requests', this)">📦 PC Build Requests</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <h1 class="page-title" id="pageTitle">Attendance</h1>
+                <div class="user-info">
+                    <div class="user-details">
+                        <span class="user-name" id="displayName"></span>
+                        <span class="user-id" id="displayEmployeeId"></span>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div id="attendanceSection" class="attendance-section">
+                <div class="attendance-header">
+                    <div class="date-time">
+                        <div class="date" id="currentDate"></div>
+                        <div class="time" id="currentTime"></div>
+                    </div>
+                    <button class="clock-btn clock-in" id="clockBtn" onclick="handleClock()">Clock In</button>
+                </div>
+
+                <div class="attendance-status">
+                    <strong>Current Status:</strong> <span id="statusText">Not Clocked In</span>
+                    <div id="statusBadge" class="status-badge status-clock-out">Out</div>
+                </div>
+
+                <h2>Today's Attendance History</h2>
+                <div class="attendance-history">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Clock In</th>
+                                <th>Clock Out</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceHistory"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="profileSection" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="profile-image-container">
+                        <img id="profileImage" class="profile-image" src="" alt="Profile" style="display: none;">
+                        <div id="profilePlaceholder" class="profile-image-placeholder"></div>
+                        <div class="upload-btn" onclick="document.getElementById('imageUpload').click()">Change Photo</div>
+                        <input type="file" id="imageUpload" accept="image/*" onchange="handleImageUpload(event)">
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="profileName">Employee Name</h2>
+                        <div class="employee-id-display" id="profileEmployeeId"></div>
+                        <p id="profileEmail">employee@openpc.com</p>
+                        <p id="profileRole">Role: Staff</p>
+                        <p id="profileDepartment">Department: Sales</p>
+                        <p id="profileJoinDate">Joined: 2024-01-01</p>
+                        <p id="profilePhone">Phone: +1 (555) 123-4567</p>
+                        <button class="edit-profile-btn" onclick="editProfile()">Edit Profile</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="requestsSection" class="requests-section hidden">
+                <div class="requests-header">
+                    <h2>PC Build Requests</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" onclick="filterRequests('all')">All</button>
+                        <button class="filter-btn" onclick="filterRequests('pending')">Pending</button>
+                        <button class="filter-btn" onclick="filterRequests('finished')">Finished</button>
+                    </div>
+                </div>
+                <div class="requests-grid" id="requestsGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div class="modal" id="requestModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Request Details</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let employees = {};
+        let currentUser = null;
+        let attendanceRecords = {};
+        let currentFilter = 'all';
+        let selectedRequest = null;
+
+        // PC Build Requests with more details
+        let pcRequests = [
+            { 
+                id: 1, 
+                customer: "Clint Howard", 
+                email: "clint.howard@email.com",
+                phone: "0917 555 1234",
+                request: "Gaming PC Build", 
+                specs: "RTX 4080, i9-13900K, 32GB RAM, 2TB NVMe SSD, 1000W PSU, Liquid Cooling",
+                budget: "$2500", 
+                status: "Pending", 
+                date: "2026-03-21",
+                notes: "Customer wants RGB everything, prefers white case",
+                components: [
+                    "CPU: Intel Core i9-13900K",
+                    "GPU: NVIDIA RTX 4080 16GB",
+                    "RAM: 32GB DDR5 6000MHz",
+                    "Storage: 2TB NVMe SSD",
+                    "PSU: 1000W Gold Certified",
+                    "Cooling: 360mm Liquid Cooler"
+                ]
+            },
+            { 
+                id: 2, 
+                customer: "Sarah Johnson", 
+                email: "sarah.j@email.com",
+                phone: "0918 555 5678",
+                request: "Workstation PC", 
+                specs: "Ryzen 9, 64GB RAM, RTX 4060, 4TB Storage, Multiple Monitors Support",
+                budget: "$2000", 
+                status: "In Progress", 
+                date: "2026-03-16",
+                notes: "For video editing and 3D rendering",
+                components: [
+                    "CPU: AMD Ryzen 9 7950X",
+                    "GPU: NVIDIA RTX 4060 8GB",
+                    "RAM: 64GB DDR5 5200MHz",
+                    "Storage: 2TB NVMe SSD + 2TB HDD",
+                    "PSU: 850W Gold Certified",
+                    "Cooling: Air Cooler"
+                ]
+            },
+            { 
+                id: 3, 
+                customer: "Mike Wilson", 
+                email: "mike.w@email.com",
+                phone: "0919 555 9012",
+                request: "Budget Gaming Build", 
+                specs: "Ryzen 5, RTX 3060, 16GB RAM, 1TB SSD",
+                budget: "$1000", 
+                status: "New", 
+                date: "2026-03-27",
+                notes: "Entry level gaming, wants upgrade path",
+                components: [
+                    "CPU: AMD Ryzen 5 5600X",
+                    "GPU: NVIDIA RTX 3060 12GB",
+                    "RAM: 16GB DDR4 3200MHz",
+                    "Storage: 1TB NVMe SSD",
+                    "PSU: 650W Bronze Certified",
+                    "Cooling: Stock Cooler"
+                ]
+            },
+            { 
+                id: 4, 
+                customer: "Emily Brown", 
+                email: "emily.b@email.com",
+                phone: "0920 555 3456",
+                request: "Content Creator PC", 
+                specs: "Ryzen 9, 32GB RAM, RTX 4070, 2TB SSD, Capture Card",
+                budget: "$2200", 
+                status: "Pending", 
+                date: "2026-03-28",
+                notes: "Streaming and content creation setup",
+                components: [
+                    "CPU: AMD Ryzen 9 7900X",
+                    "GPU: NVIDIA RTX 4070 12GB",
+                    "RAM: 32GB DDR5 5600MHz",
+                    "Storage: 2TB NVMe SSD",
+                    "PSU: 850W Gold Certified",
+                    "Cooling: 240mm Liquid Cooler",
+                    "Extras: Elgato Capture Card"
+                ]
+            },
+            { 
+                id: 5, 
+                customer: "David Lee", 
+                email: "david.lee@email.com",
+                phone: "0921 555 7890",
+                request: "Entry Level Gaming", 
+                specs: "Ryzen 5, 16GB RAM, RTX 3050, 500GB SSD",
+                budget: "$800", 
+                status: "Finished", 
+                date: "2026-03-29",
+                notes: "Completed - Customer picked up",
+                components: [
+                    "CPU: AMD Ryzen 5 5500",
+                    "GPU: NVIDIA RTX 3050 8GB",
+                    "RAM: 16GB DDR4 3200MHz",
+                    "Storage: 500GB NVMe SSD",
+                    "PSU: 550W Bronze Certified",
+                    "Cooling: Stock Cooler"
+                ]
+            }
+        ];
+
+        // Load employees data from localStorage
+        function loadEmployees() {
+            const savedEmployees = localStorage.getItem('openpc_employees');
+            if (savedEmployees) {
+                employees = JSON.parse(savedEmployees);
+            } else {
+                employees = {
+                    '1003312949': { 
+                        id: '1003312949',
+                        name: 'Patrick Joseph Datu',
+                        email: 'patrickjosephdatu213@gmail.com',
+                        role: 'Branch Manager',
+                        department: 'Malolos',
+                        joinDate: '2026-03-09',
+                        phone: '0993 984 2618',
+                        password: 'patrick123'
+                    },
+                    '1003312950': { id: '1003312950', name: 'Employee 1003312950', email: 'employee1003312950@openpc.com', role: 'Staff', department: 'TBD', joinDate: '2026-03-10', phone: 'TBD', password: 'welcome2026' },
+                    '1003312951': { id: '1003312951', name: 'Employee 1003312951', email: 'employee1003312951@openpc.com', role: 'Staff', department: 'TBD', joinDate: '2026-03-10', phone: 'TBD', password: 'welcome2026' },
+                    '1003312952': { id: '1003312952', name: 'Employee 1003312952', email: 'employee1003312952@openpc.com', role: 'Staff', department: 'TBD', joinDate: '2026-03-10', phone: 'TBD', password: 'welcome2026' },
+                    '1003312953': { id: '1003312953', name: 'Employee 1003312953', email: 'employee1003312953@openpc.com', role: 'Staff', department: 'TBD', joinDate: '2026-03-10', phone: 'TBD', password: 'welcome2026' },
+                    '1003312954': { id: '1003312954', name: 'Employee 1003312954', email: 'employee1003312954@openpc.com', role: 'Staff', department: 'TBD', joinDate: '2026-03-10', phone: 'TBD', password: 'welcome2026' },
+                    '1003312955': { id: '1003312955', name: 'Employee 1003312955', email: 'employee1003312955@openpc.com', role: 'Staff', department: 'TBD', joinDate: '2026-03-10', phone: 'TBD', password: 'welcome2026' },
+                    '1003312956': { id: '1003312956', name: 'Employee 1003312956', email: 'employee1003312956@openpc.com', role: 'Staff', department: 'TBD', joinDate: '2026-03-10', phone: 'TBD', password: 'welcome2026' },
+                    '1003312957': { id: '1003312957', name: 'Employee 1003312957', email: 'employee1003312957@openpc.com', role: 'Staff', department: 'TBD', joinDate: '2026-03-10', phone: 'TBD', password: 'welcome2026' },
+                    '1003312958': { id: '1003312958', name: 'Employee 1003312958', email: 'employee1003312958@openpc.com', role: 'Staff', department: 'TBD', joinDate: '2026-03-10', phone: 'TBD', password: 'welcome2026' },
+                    '1003312959': { id: '1003312959', name: 'Employee 1003312959', email: 'employee1003312959@openpc.com', role: 'Staff', department: 'TBD', joinDate: '2026-03-10', phone: 'TBD', password: 'welcome2026' }
+                };
+                saveEmployees();
+            }
+        }
+
+        // Save employees data to localStorage
+        function saveEmployees() {
+            localStorage.setItem('openpc_employees', JSON.stringify(employees));
+        }
+
+        // Load employee specific data
+        function loadEmployeeData(employeeId) {
+            const savedProfile = localStorage.getItem(`profile_${employeeId}`);
+            if (savedProfile) {
+                const profileData = JSON.parse(savedProfile);
+                employees[employeeId] = { ...employees[employeeId], ...profileData };
+                saveEmployees();
+            }
+
+            const savedAttendance = localStorage.getItem(`attendance_${employeeId}`);
+            if (savedAttendance) {
+                attendanceRecords = JSON.parse(savedAttendance);
+            } else {
+                attendanceRecords = { currentSession: null, history: [] };
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadEmployees();
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                const userData = JSON.parse(savedUser);
+                currentUser = employees[userData.id];
+                if (currentUser) {
+                    loadEmployeeData(currentUser.id);
+                    showDashboard();
+                }
+            }
+        });
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const employeeId = document.getElementById('employeeId').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (employees[employeeId] && employees[employeeId].password === password) {
+                currentUser = employees[employeeId];
+                loadEmployeeData(employeeId);
+                localStorage.setItem('currentUser', JSON.stringify({ id: employeeId }));
+                showDashboard();
+            } else {
+                alert('Invalid Employee ID or Password. Please check the credentials below.');
+            }
+        });
+
+        function showDashboard() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'block';
+            updateSidebarInfo();
+            updateProfileDisplay();
+            updateAttendanceDisplay();
+            updateRequestsDisplay();
+        }
+
+        function updateSidebarInfo() {
+            if (currentUser) {
+                document.getElementById('sidebarEmployeeId').textContent = `ID: ${currentUser.id}`;
+            }
+        }
+
+        function updateProfileDisplay() {
+            if (currentUser) {
+                document.getElementById('displayName').textContent = currentUser.name;
+                document.getElementById('displayEmployeeId').textContent = currentUser.id;
+                document.getElementById('profileName').textContent = currentUser.name;
+                document.getElementById('profileEmployeeId').textContent = currentUser.id;
+                document.getElementById('profileEmail').textContent = currentUser.email;
+                document.getElementById('profileRole').textContent = `Role: ${currentUser.role}`;
+                document.getElementById('profileDepartment').textContent = `Department: ${currentUser.department}`;
+                document.getElementById('profileJoinDate').textContent = `Joined: ${currentUser.joinDate}`;
+                document.getElementById('profilePhone').textContent = `Phone: ${currentUser.phone}`;
+
+                if (currentUser.profileImage) {
+                    document.getElementById('profileImage').src = currentUser.profileImage;
+                    document.getElementById('profileImage').style.display = 'block';
+                    document.getElementById('profilePlaceholder').style.display = 'none';
+                } else {
+                    document.getElementById('profileImage').style.display = 'none';
+                    document.getElementById('profilePlaceholder').style.display = 'flex';
+                    document.getElementById('profilePlaceholder').textContent = currentUser.name.charAt(0).toUpperCase();
+                }
+            }
+        }
+
+        function updateAttendanceDisplay() {
+            if (attendanceRecords.currentSession) {
+                document.getElementById('statusText').textContent = 'Clocked In';
+                document.getElementById('statusBadge').className = 'status-badge status-clock-in';
+                document.getElementById('statusBadge').textContent = 'Clocked In';
+                document.getElementById('clockBtn').textContent = 'Clock Out';
+                document.getElementById('clockBtn').className = 'clock-btn clock-out';
+            } else {
+                document.getElementById('statusText').textContent = 'Not Clocked In';
+                document.getElementById('statusBadge').className = 'status-badge status-clock-out';
+                document.getElementById('statusBadge').textContent = 'Out';
+                document.getElementById('clockBtn').textContent = 'Clock In';
+                document.getElementById('clockBtn').className = 'clock-btn clock-in';
+            }
+            updateAttendanceHistory();
+        }
+
+        function updateAttendanceHistory() {
+            const historyBody = document.getElementById('attendanceHistory');
+            historyBody.innerHTML = '';
+
+            if (attendanceRecords.history && attendanceRecords.history.length > 0) {
+                attendanceRecords.history.slice(-5).reverse().forEach(record => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${record.date}</td>
+                        <td>${record.clockIn || '-'}</td>
+                        <td>${record.clockOut || '-'}</td>
+                        <td><span class="status-badge ${record.clockOut ? 'status-clock-out' : 'status-clock-in'}">${record.clockOut ? 'Completed' : 'Active'}</span></td>
+                    `;
+                    historyBody.appendChild(row);
+                });
+            } else {
+                historyBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No attendance records found</td></tr>';
+            }
+        }
+
+        function updateRequestsDisplay() {
+            const requestsGrid = document.getElementById('requestsGrid');
+            requestsGrid.innerHTML = '';
+
+            let filteredRequests = pcRequests;
+            if (currentFilter === 'pending') {
+                filteredRequests = pcRequests.filter(r => r.status !== 'Finished');
+            } else if (currentFilter === 'finished') {
+                filteredRequests = pcRequests.filter(r => r.status === 'Finished');
+            }
+
+            filteredRequests.forEach(request => {
+                const card = document.createElement('div');
+                card.className = 'request-card';
+                card.onclick = () => showRequestDetails(request);
+                
+                const statusClass = request.status === 'Finished' ? 'tag-finished' : 
+                                   request.status === 'In Progress' ? 'tag-progress' : 'tag-pending';
+                
+                card.innerHTML = `
+                    <h3>${request.request}</h3>
+                    <p class="customer">👤 ${request.customer}</p>
+                    <div class="request-specs-summary">
+                        <strong>Quick Specs:</strong><br>
+                        ${request.specs.substring(0, 60)}...
+                    </div>
+                    <div class="request-footer">
+                        <span class="request-tag ${statusClass}">${request.status}</span>
+                        <span class="request-date">📅 ${request.date}</span>
+                    </div>
+                `;
+                requestsGrid.appendChild(card);
+            });
+        }
+
+        function filterRequests(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            updateRequestsDisplay();
+        }
+
+        function showRequestDetails(request) {
+            selectedRequest = request;
+            const modal = document.getElementById('requestModal');
+            const modalBody = document.getElementById('modalBody');
+            
+            const isFinished = request.status === 'Finished';
+            
+            // Create email content
+            const emailSubject = encodeURIComponent(`PC Build Request - ${request.customer} - ${request.request}`);
+            const emailBody = encodeURIComponent(
+                `Customer: ${request.customer}\n` +
+                `Email: ${request.email}\n` +
+                `Phone: ${request.phone}\n` +
+                `Request: ${request.request}\n` +
+                `Date: ${request.date}\n\n` +
+                `SPECIFICATIONS:\n${request.components.join('\n')}\n\n` +
+                `Additional Notes: ${request.notes}\n\n` +
+                `Budget: ${request.budget}\n` +
+                `Status: ${request.status}`
+            );
+            
+            modalBody.innerHTML = `
+                <div class="request-detail-item">
+                    <div class="detail-label">Customer Information</div>
+                    <div class="detail-value">
+                        <strong>${request.customer}</strong><br>
+                        📧 ${request.email}<br>
+                        📞 ${request.phone}
+                    </div>
+                </div>
+                
+                <div class="request-detail-item">
+                    <div class="detail-label">Request Details</div>
+                    <div class="detail-value">
+                        <strong>${request.request}</strong><br>
+                        Budget: ${request.budget}<br>
+                        Date Requested: ${request.date}<br>
+                        Status: <span class="request-tag ${isFinished ? 'tag-finished' : 'tag-pending'}">${request.status}</span>
+                    </div>
+                </div>
+                
+                <div class="request-detail-item">
+                    <div class="detail-label">Complete Specifications</div>
+                    <div class="specs-box">
+                        ${request.components.map(comp => `• ${comp}`).join('<br>')}
+                    </div>
+                </div>
+                
+                <div class="request-detail-item">
+                    <div class="detail-label">Additional Notes</div>
+                    <div class="detail-value">
+                        ${request.notes}
+                    </div>
+                </div>
+                
+                <div class="copy-section">
+                    <button class="copy-btn" onclick="copyToClipboard()">📋 Copy Full Details</button>
+                    <div id="copySuccess" class="copy-success">✓ Copied to clipboard!</div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="action-btn finish-btn" onclick="markAsFinished()" ${isFinished ? 'disabled' : ''}>
+                        ${isFinished ? '✓ Already Finished' : '✅ Mark as Finished'}
+                    </button>
+                    <button class="action-btn email-btn" onclick="window.location.href='mailto:main.shop@openpc.com?subject=${emailSubject}&body=${emailBody}'">
+                        📧 Email to Main Shop
+                    </button>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('requestModal').classList.remove('active');
+            selectedRequest = null;
+        }
+
+        function copyToClipboard() {
+            if (!selectedRequest) return;
+            
+            const text = `
+CUSTOMER: ${selectedRequest.customer}
+EMAIL: ${selectedRequest.email}
+PHONE: ${selectedRequest.phone}
+REQUEST: ${selectedRequest.request}
+DATE: ${selectedRequest.date}
+STATUS: ${selectedRequest.status}
+BUDGET: ${selectedRequest.budget}
+
+COMPLETE SPECIFICATIONS:
+${selectedRequest.components.map(comp => `- ${comp}`).join('\n')}
+
+ADDITIONAL NOTES:
+${selectedRequest.notes}
+            `.trim();
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const copySuccess = document.getElementById('copySuccess');
+                copySuccess.classList.add('show');
+                setTimeout(() => {
+                    copySuccess.classList.remove('show');
+                }, 2000);
+            });
+        }
+
+        function markAsFinished() {
+            if (!selectedRequest) return;
+            
+            // Update status
+            selectedRequest.status = 'Finished';
+            
+            // Update in the main array
+            const index = pcRequests.findIndex(r => r.id === selectedRequest.id);
+            if (index !== -1) {
+                pcRequests[index].status = 'Finished';
+            }
+            
+            // Update displays
+            updateRequestsDisplay();
+            closeModal();
+            alert(`✅ Request #${selectedRequest.id} has been marked as Finished!`);
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        function showSection(section, element) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('attendanceSection').classList.add('hidden');
+            document.getElementById('profileSection').classList.add('hidden');
+            document.getElementById('requestsSection').classList.add('hidden');
+
+            if (section === 'attendance') {
+                document.getElementById('attendanceSection').classList.remove('hidden');
+                document.getElementById('pageTitle').textContent = 'Attendance';
+                updateAttendanceDisplay();
+            } else if (section === 'profile') {
+                document.getElementById('profileSection').classList.remove('hidden');
+                document.getElementById('pageTitle').textContent = 'Profile';
+                updateProfileDisplay();
+            } else {
+                document.getElementById('requestsSection').classList.remove('hidden');
+                document.getElementById('pageTitle').textContent = 'PC Build Requests';
+                updateRequestsDisplay();
+            }
+        }
+
+        function handleClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const dateString = now.toLocaleDateString();
+
+            if (!attendanceRecords.currentSession) {
+                attendanceRecords.currentSession = { date: dateString, clockIn: timeString, clockOut: null };
+                if (!attendanceRecords.history) attendanceRecords.history = [];
+                attendanceRecords.history.push(attendanceRecords.currentSession);
+                alert(`Clocked In at ${timeString}`);
+            } else {
+                attendanceRecords.currentSession.clockOut = timeString;
+                attendanceRecords.currentSession = null;
+                alert(`Clocked Out at ${timeString}`);
+            }
+
+            if (currentUser) {
+                localStorage.setItem(`attendance_${currentUser.id}`, JSON.stringify(attendanceRecords));
+            }
+            updateAttendanceDisplay();
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File is too large. Please select an image under 5MB.');
+                    return;
+                }
+                if (!file.type.match('image.*')) {
+                    alert('Please select an image file.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageUrl = e.target.result;
+                    document.getElementById('profileImage').src = imageUrl;
+                    document.getElementById('profileImage').style.display = 'block';
+                    document.getElementById('profilePlaceholder').style.display = 'none';
+                    
+                    if (currentUser) {
+                        currentUser.profileImage = imageUrl;
+                        employees[currentUser.id] = { ...employees[currentUser.id], ...currentUser };
+                        localStorage.setItem(`profile_${currentUser.id}`, JSON.stringify({ 
+                            profileImage: imageUrl,
+                            name: currentUser.name,
+                            phone: currentUser.phone 
+                        }));
+                        saveEmployees();
+                        alert('Profile picture saved successfully!');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function editProfile() {
+            const newName = prompt('Enter your name:', currentUser.name);
+            if (newName && newName !== currentUser.name) currentUser.name = newName;
+            
+            const newPhone = prompt('Enter your phone number:', currentUser.phone);
+            if (newPhone && newPhone !== currentUser.phone) currentUser.phone = newPhone;
+            
+            const newRole = prompt('Enter your role:', currentUser.role);
+            if (newRole && newRole !== currentUser.role) currentUser.role = newRole;
+            
+            const newDepartment = prompt('Enter your department:', currentUser.department);
+            if (newDepartment && newDepartment !== currentUser.department) currentUser.department = newDepartment;
+            
+            employees[currentUser.id] = { ...employees[currentUser.id], ...currentUser };
+            localStorage.setItem(`profile_${currentUser.id}`, JSON.stringify({ 
+                name: currentUser.name,
+                phone: currentUser.phone,
+                role: currentUser.role,
+                department: currentUser.department,
+                profileImage: currentUser.profileImage 
+            }));
+            saveEmployees();
+            updateProfileDisplay();
+            alert('Profile updated successfully!');
+        }
+
+        function logout() {
+            currentUser = null;
+            attendanceRecords = {};
+            localStorage.removeItem('currentUser');
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('employeeId').value = '';
+            document.getElementById('password').value = '';
+        }
+    </script>
+</body>
+</html>
